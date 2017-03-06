@@ -1,0 +1,10 @@
+﻿<div layout="row" layout-align="center center" ng-controller="FriendController" ng-init="getMyFriends()">
+    <md-divider></md-divider>
+    <md-list>
+        <md-subheader class="md-no-sticky">Lista znajomych</md-subheader>
+        <md-list-item ng-repeat="user in users" class="noright">
+            <p>{{user.Name}} {{user.Surname}}</p>
+            <md-icon class="material-icons" ng-click="removeFriend(user)" layout-align="right" aria-label="Dodaj do znajomych">delete</md-icon>
+        </md-list-item>
+    </md-list>
+</div>

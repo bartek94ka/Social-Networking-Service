@@ -1,0 +1,27 @@
+﻿<div layout="row" layout-align="center center" layout-align-gt-md="center center" ng-controller="UserController" ng-init="LoadData()"> 
+    <md-content layout-padding>
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Imię</label>
+            <input md-input type="text" ng-model="Name" required>
+        </md-input-container>
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Nazwisko</label>
+            <input md-input type="text" ng-model="Surname" required>
+        </md-input-container>
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Zasięg (w metrach)</label>
+            <input md-input type="number" ng-model="SearchRange" required>
+        </md-input-container>
+        <p>Wybór domyślnego Avatara</p>
+        <md-divider></md-divider>
+        <md-radio-group ng-model="Avatar">
+            <md-radio-button ng-repeat="it in avatarData"
+                             ng-value="it.value"
+                             aria-label="{{it.title}}">
+                
+                    <md-icon md-svg-icon="../../img/Avatars/svg/{{it.id}}.svg" style="height:48px; width:48px" />
+            </md-radio-button>
+        </md-radio-group>
+        <md-button class="md-raised md primary" ng-click="SaveChanges()">Zapisz</md-button>
+    </md-content>
+</div>

@@ -1,0 +1,15 @@
+﻿<div layout="row" layout-align="center center" layout-align-gt-md="center center" ng-controller="SessionController">
+    <md-content layout-padding>
+        <p>Nie masz jeszcze konta?</p>
+        <a href="#/register">Zarejestruj się</a>
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Email</label>
+            <input md-input type="text" ng-model="Email" required>
+        </md-input-container>
+        <md-input-container class="md-block" flex-gt-sm>
+            <label>Hasło</label>
+            <input md-input type="password" ng-model="Password" required>
+        </md-input-container>
+        <md-button class="md-raised md primary" ng-click="login()">Zaloguj się</md-button>
+    </md-content>
+</div>

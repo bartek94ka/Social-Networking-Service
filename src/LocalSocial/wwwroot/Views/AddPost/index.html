@@ -1,0 +1,39 @@
+﻿<div ng-controller="PostController" layout="row" layout-align="center center" layout-align-gt-md="center center" ng-init="GetLocation()">
+    <md-content layout-padding>
+        <div>
+            <form name="postForm">
+                <span>Położenie geograficzne</span>
+                <md-input-container class="md-block" flex-gt-xs ng-disabled="true">
+                    <label>Długość</label>
+                    <input ng-model="Lat" disabled>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-xs ng-disabled="true">
+                    <label>Szerokość</label>
+                    <input ng-model="Lng" disabled>
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Tytuł</label>
+                    <input name="title" ng-model="post.title" required md-maxlength="25">
+                    <div ng-messages="postForm.title.$error" role="alert" multiple>
+                        <div ng-message="required" class="my-message">Tytuł nie może być pusty</div>
+                        <div ng-message="md-maxlength" class="my-message">Tytuł jest za długi</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Opis</label>
+                    <textarea ng-model="post.description" md-maxlength="150" rows="5" md-select-on-focus style="background: white"></textarea>
+                </md-input-container>
+                <md-chips ng-model="post.Tags"
+                          md-removable="ctrl.removable"
+                          placeholder="Dodaj Tag"
+                          delete-button-label="Usuń Tag"
+                          delete-hint="Naciśnij usuń, aby zlikwidować tag"
+                          secondary-placeholder="+Tag">
+                </md-chips>
+                <br />
+            </form>
+        </div>
+        <md-button class="md-raised md primary" ng-click="AddPost()">Dodaj post</md-button>
+    </md-content>
+</div>

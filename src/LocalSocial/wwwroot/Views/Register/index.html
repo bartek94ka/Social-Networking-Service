@@ -1,0 +1,23 @@
+﻿<div layout="row" layout-align="center center" layout-align-gt-md="center center" ng-controller="SessionController">
+    <md-content layout-padding>
+        <p>Masz konto? <a href="#/login">Zaloguj się</a></p>
+        <form name="registerForm">
+            <h5 style="color:#e90000">{{EmailError}}</h5>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Email</label>
+                <input name="email" md-input type="text" ng-model="Email" required>
+            </md-input-container>
+            <h5 style="color:#e90000">{{PasswordError}}</h5>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Hasło</label>
+                <input name="password" type="password" ng-model="Password" required min="6">                
+            </md-input-container>
+            <h5 style="color:#e90000">{{ConfirmPasswordError}}</h5>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label>Powtórz hasło</label>
+                <input name="confirmpassword" md-input id="password2" ng-model="ConfirmPassword" type="password" required match="Password">
+            </md-input-container>
+        </form>
+        <md-button class="md-raised md primary" ng-click="registerUser()">Zarejestruj się</md-button>
+    </md-content>
+</div>

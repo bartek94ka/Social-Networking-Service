@@ -1,0 +1,43 @@
+﻿<div ng-controller="PostController" layout="row" layout-align="center center" layout-align-gt-md="center center" ng-init="GetPost()">
+    <md-content layout-padding>
+        <div>
+            <md-card class="card">
+                <md-card-header>
+                    <md-card-avatar>
+                        <img  src="../../img/Avatars/png/{{post.avatar}}.png" />
+                    </md-card-avatar>
+                    <md-card-header-text>
+                        <span class="md-title">{{post.userName}} {{post.userSurname}}</span>
+                        <span class="md-subhead">{{post.AddDate | date:'yyyy-MM-dd HH:mm'}}</span>
+                    </md-card-header-text>
+                </md-card-header>
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline">{{post.title}}</span>
+                    </md-card-title-text>
+                </md-card-title>
+                <ul ng-repeat="tag in post.Tags">
+                    <a href="#/tag/{{tag.TagId}}">{{tag.TagId}}</a>
+                </ul>
+                <md-card-content>
+                    <p>
+                        {{post.description}}
+                    </p>
+                </md-card-content>
+            </md-card>
+            <md-content>
+                <md-list>
+                    <p>Komentarze</p>
+                    <md-divider></md-divider>
+                    <md-list-item class="md-3-line" ng-repeat="item in post.Comments">
+                        <div class="md-list-item-text">
+                            <h4>{{item.User.Name}} {{item.User.Surname}}</h4>
+                            <p>{{item.Content}}</p>
+                        </div>
+                        <md-divider ng-if="!$last"></md-divider>
+                    </md-list-item>
+                </md-list>
+            </md-content>
+        </div>
+    </md-content>
+</div>

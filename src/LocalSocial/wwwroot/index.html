@@ -1,0 +1,93 @@
+﻿<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-cookies.js" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+    <meta name="viewport" content="initial-scale=1" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+         /* Always set the map height explicitly to define the size of the div
+        * element that contains the map. */
+         #map {
+             height: 80%;
+         }
+    </style>
+</head>
+
+<body ng-app="StarterApp" ng-cloak>
+<div class="container-fluid">
+    <md-toolbar layout="column" layout="row" >
+        <div class="md-toolbar-tools">
+            <div ng-controller="AppCtrl">
+                <i class="material-icons" ng-click="toggleSidenav('left')" aria-label="Toggle Menu">dehaze</i>
+            </div>
+            <h1 layout-align-gt-sm="center">
+                LocalSocial
+            </h1>
+        </div>
+    </md-toolbar>
+    <div layout="row" flex class="change-my-css">
+        <section>
+            <md-sidenav class="md-sidenav-left" md-component-id="left"
+                        md-disable-backdrop md-whiteframe="4">
+                <md-toolbar class="md-toolbar-tools">
+                    <div ng-controller="AppCtrl">
+                        <i class="material-icons" ng-click="toggleSidenav('left')" aria-label="Toggle Menu">dehaze</i>
+                    </div>
+                    <h1 layout-align-gt-sm="center">
+                        LocalSocial
+                    </h1>
+                </md-toolbar>
+                <div flex>
+                    <md-list ng-controller="MenuController as menu">
+                        <md-list-item ng-repeat="menuItem in menu.items">
+                            <md-button ng-click="toggleSidenav('left')" href="{{menuItem.LinkReference}}">
+                                <span class="ng-binding ng-scope">
+                                    <md-icon class="material-icons">{{menuItem.LinkIcon}}</md-icon>
+                                    {{menuItem.LinkText}}
+                                </span>
+                            </md-button>
+                        </md-list-item>
+                    </md-list>
+                </div>
+            </md-sidenav>
+        </section>
+    </div>
+    <ng-view></ng-view>
+</div>
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular-animate/angular-animate.min.js"></script>
+    <script src="lib/angular-aria/angular-aria.min.js"></script>
+    <script src="lib/angular-messages/angular-messages.min.js"></script>
+    <script src="lib/angular-resource/angular-resource.min.js"></script>
+    <script src="lib/angular-route/angular-route.min.js"></script>
+    <script src="lib/angular-cookies/angular-cookies.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/ngstorage/0.3.6/ngStorage.min.js"></script>
+    <!-- Angular Material Library -->
+    <script src="lib/angular-material/angular-material.min.js"></script>
+    <!-- Services -->
+    <script src="Services/sessionService.js"></script>
+    <script src="Services/postService.js"></script>
+    <script src="Services/locationService.js"></script>
+    <script src="Services/userService.js"></script>
+    <script src="Services/friendService.js"></script>
+    <script src="Services/commentService.js"></script>
+    <!-- Controllers -->
+    <script src="Controllers/sideNavController.js"></script>
+    <script src="Controllers/menuController.js"></script>
+    <script src="Controllers/sessionController.js"></script>
+    <script src="Controllers/postController.js"></script>
+    <script src="Controllers/locationController.js"></script>
+    <script src="Controllers/userController.js"></script>
+    <script src="Controllers/friendController.js"></script>
+    <!-- app.js -->
+    <script src="app.js"></script>
+
+</body>
+
+</html>

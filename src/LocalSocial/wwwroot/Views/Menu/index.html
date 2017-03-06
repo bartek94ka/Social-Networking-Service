@@ -1,0 +1,27 @@
+﻿<div layout="row" flex class="change-my-css">
+    <section>
+        <md-sidenav class="md-sidenav-left" md-component-id="left"
+                    md-disable-backdrop md-whiteframe="4">
+            <md-toolbar class="md-toolbar-tools">
+                <div ng-controller="AppCtrl">
+                    <i class="material-icons" ng-click="toggleSidenav('left')" aria-label="Toggle Menu">dehaze</i>
+                </div>
+                <h1 layout-align-gt-sm="center">
+                    LocalSocial
+                </h1>
+            </md-toolbar>
+            <div flex>
+                <md-list ng-controller="MenuController as menu">
+                    <md-list-item ng-repeat="menuItem in menu.items">
+                        <md-button ng-click="toggleSidenav('left')" href="{{menuItem.LinkReference}}">
+                            <span class="ng-binding ng-scope">
+                                <md-icon class="material-icons">{{menuItem.LinkIcon}}</md-icon>
+                                {{menuItem.LinkText}}
+                            </span>
+                        </md-button>
+                    </md-list-item>
+                </md-list>
+            </div>
+        </md-sidenav>
+    </section>
+</div>
