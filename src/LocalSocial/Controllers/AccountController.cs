@@ -11,6 +11,8 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using LocalSocial;
+using System.Linq;
 
 [Route("api/[controller]")]
 public class AccountController : Controller
@@ -18,6 +20,7 @@ public class AccountController : Controller
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly ILogger _logger;
+    private readonly LocalSocialContext _context;
 
     public AccountController(
         UserManager<User> userManager,
@@ -27,6 +30,7 @@ public class AccountController : Controller
         _userManager = userManager;
         _signInManager = signInManager;
         _logger = loggerFactory.CreateLogger<AccountController>();
+        _context = new LocalSocialContext();
     }
     //
     // POST: /Account/Login
@@ -66,6 +70,33 @@ public class AccountController : Controller
             return HttpBadRequest(json2);//View(model);
         }
         return HttpBadRequest();//View(model);
+    }
+
+    [Route("remove")]
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> RemoveAccount()
+    {
+        var userId = HttpContext.User.GetUserId();
+        var user = _context.User.FirstOrDefault(x => x.Id == userId);
+        var userComments = _context.Comment.Where(x => x.UserId == userId);
+        _context.RemoveRange(userComments);
+        var userFriends = _context.UserFriends.Where(x => x.FriendId == userId && x.UserId == userId);
+        _context.RemoveRange(userFriends);
+        var userPosts = _context.Post.Where(x => x._UserId == userId);
+        var userPostsId = userPosts.Select(y => y.Id);
+        var userPostsComments = from comment in _context.Comment
+                                join postId in userPostsId on comment.PostId equals postId
+                                select comment;
+        _context.Comment.RemoveRange(userPostsComments);
+        var postsTags = from postTag in _context.PostTags
+                        join postId in userPostsId on postTag.PostId equals postId
+                        select postTag;
+        _context.PostTags.RemoveRange(postsTags);
+        _context.Post.RemoveRange(userPosts);
+        await _context.SaveChangesAsync();
+        await _userManager.DeleteAsync(user);
+        return Ok();
     }
 
     //
