@@ -1,0 +1,5 @@
+Current counter value = null
+JmeterTimerVariable value = null
+Directory path of Jmeter script file = C:\Users\Bartosz\Documents\GitHub\Social-Networking-Service\LocalSocial.JMeter.Tests
+Current counter value = null
+Directory path of Jmeter script file = C:\Users\Bartosz\Documents\GitHub\Social-Networking-Service\LocalSocial.JMeter.Tests

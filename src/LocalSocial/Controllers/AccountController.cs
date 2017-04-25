@@ -65,9 +65,9 @@ public class AccountController : Controller
             {
                 messages.Add("email", "Nieprawidłowy adres e-mail");
             }
-            string json2 = JsonConvert.SerializeObject(messages, settings);
+            string json = JsonConvert.SerializeObject(messages, settings);
             // If we got this far, something failed, redisplay form
-            return HttpBadRequest(json2);//View(model);
+            return HttpBadRequest(json);//View(model);
         }
         return HttpBadRequest();//View(model);
     }
@@ -84,6 +84,36 @@ public class AccountController : Controller
         var userFriends = _context.UserFriends.Where(x => x.FriendId == userId && x.UserId == userId);
         _context.RemoveRange(userFriends);
         var userPosts = _context.Post.Where(x => x._UserId == userId);
+        var userPostsId = userPosts.Select(y => y.Id);
+        var userPostsComments = from comment in _context.Comment
+                                join postId in userPostsId on comment.PostId equals postId
+                                select comment;
+        _context.Comment.RemoveRange(userPostsComments);
+        var postsTags = from postTag in _context.PostTags
+                        join postId in userPostsId on postTag.PostId equals postId
+                        select postTag;
+        _context.PostTags.RemoveRange(postsTags);
+        _context.Post.RemoveRange(userPosts);
+        await _context.SaveChangesAsync();
+        await _userManager.DeleteAsync(user);
+        return Ok();
+    }
+
+    [Route("remove/{email}")]
+    [HttpDelete]
+    public async Task<IActionResult> RemoveAccountByEmail(string email)
+    {
+        var user = _context.User.FirstOrDefault(x => x.Email == email);
+        if (user == null)
+        {
+            return HttpBadRequest();
+        }
+
+        var userComments = _context.Comment.Where(x => x.UserId == user.Id);
+        _context.RemoveRange(userComments);
+        var userFriends = _context.UserFriends.Where(x => x.FriendId == user.Id && x.UserId == user.Id);
+        _context.RemoveRange(userFriends);
+        var userPosts = _context.Post.Where(x => x._UserId == user.Id);
         var userPostsId = userPosts.Select(y => y.Id);
         var userPostsComments = from comment in _context.Comment
                                 join postId in userPostsId on comment.PostId equals postId
