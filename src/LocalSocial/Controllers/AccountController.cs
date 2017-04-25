@@ -49,8 +49,6 @@ public class AccountController : Controller
 
         if (ModelState.IsValid)
         {
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
@@ -69,7 +67,7 @@ public class AccountController : Controller
             // If we got this far, something failed, redisplay form
             return HttpBadRequest(json);//View(model);
         }
-        return HttpBadRequest();//View(model);
+        return HttpBadRequest();
     }
 
     [Route("remove")]
