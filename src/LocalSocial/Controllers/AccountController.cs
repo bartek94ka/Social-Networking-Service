@@ -32,12 +32,10 @@ public class AccountController : Controller
         _logger = loggerFactory.CreateLogger<AccountController>();
         _context = new LocalSocialContext();
     }
-    //
-    // POST: /Account/Login
+    
     [Route("login")]
     [HttpPost]
     [AllowAnonymous]
-    //[ValidateAntiForgeryToken]
     public async Task<IActionResult> Login([FromBody] Login model, string returnUrl = null)
     {
         JsonSerializerSettings settings = new JsonSerializerSettings
@@ -64,8 +62,7 @@ public class AccountController : Controller
                 messages.Add("email", "Nieprawidłowy adres e-mail");
             }
             string json = JsonConvert.SerializeObject(messages, settings);
-            // If we got this far, something failed, redisplay form
-            return HttpBadRequest(json);//View(model);
+            return HttpBadRequest(json);
         }
         return HttpBadRequest();
     }
@@ -126,9 +123,7 @@ public class AccountController : Controller
         await _userManager.DeleteAsync(user);
         return Ok();
     }
-
-    //
-    // POST: /Account/Register
+    
     [Route("register")]
     [HttpPost]
     [AllowAnonymous]
@@ -172,9 +167,7 @@ public class AccountController : Controller
         string json = JsonConvert.SerializeObject(messages, settings);
         return HttpBadRequest(json);
     }
-
-    //
-    // POST: /Account/LogOff
+    
     [Route("logoff")]
     [HttpPost]
     [Authorize]

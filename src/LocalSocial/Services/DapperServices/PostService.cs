@@ -59,7 +59,7 @@ namespace LocalSocial.Services.DapperServices
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Post> GetPosts()
+        public IEnumerable<Post> GetAllPosts()
         {
             throw new NotImplementedException();
         }
