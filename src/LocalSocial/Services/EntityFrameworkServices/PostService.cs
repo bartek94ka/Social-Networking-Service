@@ -56,17 +56,32 @@ namespace LocalSocial.Services.EntityFrameworkServices
 
         public Post GetPost(int Id)
         {
-            throw new NotImplementedException();
+            var post = _context.Post.Include(x => x.Comments).ThenInclude(p => p.User).Include(x => x.PostTags).First(x => x.Id == Id);
+            var user = (from us in _context.User
+                        where us.Id == post._UserId
+                        select new User { Name = us.Name, Surname = us.Surname, Email = us.Email, Avatar = us.Avatar });
+            if (user != null && post != null)
+            {
+                post.user = user.FirstOrDefault();
+                return post;
+            }
+            return null;
         }
 
-        public IEnumerable<Post> GetPosts()
+        public IEnumerable<Post> GetAllPosts()
         {
-            throw new NotImplementedException();
+            var posts = _context.Post.AsEnumerable();
+            return posts;
         }
 
         public IEnumerable<Post> GetMyPosts(string userId)
         {
-            throw new NotImplementedException();
+            var posts = _context.Post.Include(x => x.PostTags).Where(x => x._UserId == userId).OrderByDescending(p => p.AddDate).ToList();
+            for (int i = 0; i < posts.Count; i++)
+            {
+                posts[i].user = _context.User.FirstOrDefault(x => x.Id == posts[i]._UserId);
+            }
+            return posts;
         }
     }
 }

@@ -112,16 +112,15 @@ namespace LocalSocial.Controllers
         [Authorize]
         public IActionResult GetPost(int Id)
         {
-            Post post = _context.Post.Include(x => x.Comments).ThenInclude(p => p.User).Include(x => x.PostTags).First(x => x.Id == Id);
-            var user = (from us in _context.User
-                        where us.Id == post._UserId
-                        select new User { Name = us.Name, Surname = us.Surname, Email = us.Email, Avatar = us.Avatar });
-            if (user != null && post != null)
+            var post = _postService.GetPost(Id);
+            if (post == null)
             {
-                post.user = user.FirstOrDefault();
+                return HttpBadRequest();
+            }
+            else
+            {
                 return Ok(post);
             }
-            return HttpBadRequest();
         }
 
         [Route("edit/{Id:int}")]
@@ -201,15 +200,14 @@ namespace LocalSocial.Controllers
             }
             return HttpBadRequest();
         }
+
         // GET: api/Posts
         [Route("all")]
         [HttpGet]
         [Authorize]
-        public async Task<IEnumerable<Post>> GetPosts()
+        public async Task<IEnumerable<Post>> GetAllPosts()
         {
-            var userId = HttpContext.User.GetUserId();
-            //var posts = _context.Post.AllAsync(x => x.UserId == userId);
-            var posts = _context.Post.AsEnumerable();
+            var posts = _postService.GetAllPosts();
             return posts;
         }
 
@@ -219,12 +217,7 @@ namespace LocalSocial.Controllers
         public async Task<IEnumerable<Post>> GetMyPosts()
         {
             var userId = HttpContext.User.GetUserId();
-            //var posts = _context.Post.Include(x=>x.user).AsQueryable().Where(x => x._UserId == userId).OrderByDescending(p => p.AddDate);
-            var posts = _context.Post.Include(x => x.PostTags).Where(x => x._UserId == userId).OrderByDescending(p => p.AddDate).ToList();
-            for (int i = 0; i < posts.Count; i++)
-            {
-                posts[i].user = _context.User.FirstOrDefault(x => x.Id == posts[i]._UserId);
-            }
+            var posts = _postService.GetMyPosts(userId);
             return posts;
         }
     }
