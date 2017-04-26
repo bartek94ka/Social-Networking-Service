@@ -83,5 +83,10 @@ namespace LocalSocial.Services.EntityFrameworkServices
             }
             return posts;
         }
+
+        Task<IEnumerable<Post>> IPostService.GetPostsByTag(TagBindingModel tag)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

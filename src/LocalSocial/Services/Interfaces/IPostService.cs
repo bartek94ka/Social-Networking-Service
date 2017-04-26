@@ -1,5 +1,6 @@
 ﻿using LocalSocial.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace LocalSocial.Services.Interfaces
 {
@@ -14,5 +15,6 @@ namespace LocalSocial.Services.Interfaces
         IEnumerable<Post> GetAllPosts();
 
         IEnumerable<Post> GetMyPosts(string userId);
+        
     }
 }

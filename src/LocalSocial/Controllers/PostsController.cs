@@ -24,7 +24,7 @@ namespace LocalSocial.Controllers
     {
         private readonly LocalSocialContext _context;
         private readonly UserManager<User> _userManager;
-        private readonly IPostService _postService;
+        private readonly PostService _postService;
 
         public PostsController(LocalSocialContext context, UserManager<User> userManager)
         {

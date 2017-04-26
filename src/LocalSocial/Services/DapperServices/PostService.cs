@@ -22,14 +22,26 @@ namespace LocalSocial.Services.DapperServices
 
         public IEnumerable<Post> GetPostsInRange(User user, Location location)
         {
-            //user zawiera daną dotyczącą zasięgu w jakim będzie pobierał posty
             using (var connection = new SqlConnection(_connectionProvider.GetConnectionString()))
             {
-                if(connection.State == System.Data.ConnectionState.Closed)
+                if (connection.State == System.Data.ConnectionState.Closed)
                 {
                     connection.Open();
                 }
-                var posts = connection.Query<Post>(string.Format("SELECT [Id], [AddDate], [Description],[Latitude], [Longitude], [Title], [_UserId] FROM[dbo].[Post]"));
+                var query = @"SELECT [Id], [AddDate], [Description],[Latitude], [Longitude], [Title], [_UserId] 
+                                FROM [dbo].[Post]";
+                //stworzenie metody do wyciagania postow w oparciu o lokalizacje Location i zasięg wzięty z User
+                var queryResult = connection.QueryAsync(query);
+                var posts = queryResult.Result.Select(post => new Post
+                {
+                    AddDate = (DateTime)post.AddDate,
+                    Description = (string)post.Description,
+                    Id = (int)post.Id,
+                    Latitude = (float)post.Latitude,
+                    Longitude = (float)post.Longitude,
+                    Title = (string)post.Title,
+                    _UserId = (string)post._UserId
+                });
                 connection.Close();
                 return posts;
             }
@@ -44,29 +56,31 @@ namespace LocalSocial.Services.DapperServices
                     connection.Open();
                 }
                 var query = @"SELECT post.[Id],post.[AddDate],post.[Description],post.[Latitude],post.[Longitude],post.[Title],post.[_UserId],
-		postTag.[TagId],
-		users.[Id], users.[Email], users.[SearchRange], users.[Avatar]
+		                        postTag.[TagId],
+		                        users.[Id], users.[Email], users.[SearchRange], users.[Avatar]
                                 FROM[dbo].[Post] post 
                                 join[dbo].[PostTags] postTag 
                                 on post.[Id] = postTag.[PostId] 
                                 join [dbo].[AspNetUsers] users
                                 on users.[Id] = post.[_UserId]
                                 where postTag .[TagId] = '";
-                var posts = connection.Query(query + tag.TagId + "'").Select(post => new Post
+                var queryResult = connection.QueryAsync(query + tag.TagId + "'");
+                var posts = queryResult.Result.Select(post => new Post
                 {
-                    AddDate = (DateTime) post.AddDate,
-                    Id = (int) post.Id,
+                    AddDate = (DateTime)post.AddDate,
+                    Id = (int)post.Id,
+                    Description = (string)post.Description,
+                    Latitude = (float)post.Latitude,
+                    Longitude = (float)post.Longitude,
+                    Title = (string)post.Title,
+                    //na razie bez tagów
                     user = new User
                     {
-                        Email = (string) post.Email
+                        Email = (string)post.Email,
+                        Avatar = (string)post.Avatar,
+                        SearchRange = (float)post.SearchRange
                     }
                 });
-
-                //for (int i = 0; i < posts.Count; i++)
-                //{
-                //    var user = connection.Query<User>(string.Format("SELECT [Email],[Name],[Surname],[Avatar] FROM [dbo].[AspNetUsers] users join [dbo].[Post] post on post._userId = users.[Id] and post.[Id] = {0}", posts[i].Id));
-                //    posts[i].user = user.FirstOrDefault();
-                //}
                 connection.Close();
                 return posts;
             }
@@ -79,7 +93,28 @@ namespace LocalSocial.Services.DapperServices
 
         public IEnumerable<Post> GetAllPosts()
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_connectionProvider.GetConnectionString()))
+            {
+                if (connection.State == System.Data.ConnectionState.Closed)
+                {
+                    connection.Open();
+                }
+                var query = @"SELECT [Id], [AddDate], [Description],[Latitude], [Longitude], [Title], [_UserId] 
+                                FROM [dbo].[Post]";
+                var queryResult = connection.QueryAsync(query);
+                var posts = queryResult.Result.Select(post => new Post
+                {
+                    AddDate = (DateTime)post.AddDate,
+                    Description = (string)post.Description,
+                    Id = (int)post.Id,
+                    Latitude = (float)post.Latitude,
+                    Longitude = (float)post.Longitude,
+                    Title = (string)post.Title,
+                    _UserId = (string)post._UserId
+                });
+                connection.Close();
+                return posts;
+            }
         }
 
         public IEnumerable<Post> GetMyPosts(string userId)
