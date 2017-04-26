@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LocalSocial.Models;
 using LocalSocial.Services.Interfaces;
+using Microsoft.Data.Entity;
 
 namespace LocalSocial.Services.EntityFrameworkServices
 {
@@ -42,7 +43,19 @@ namespace LocalSocial.Services.EntityFrameworkServices
 
         public IEnumerable<Post> GetMyFriendsPosts(string userId)
         {
-            throw new NotImplementedException();
+            var posts = (from p in _context.Post.Include(p => p.PostTags)
+                         join uf in _context.UserFriends on p._UserId equals uf.FriendId
+                         where uf.UserId == userId
+                         orderby p.AddDate descending
+                         select p).ToList();
+            for (int i = 0; i < posts.Count; i++)
+            {
+                var user = (from us in _context.User
+                            where us.Id == posts[i]._UserId
+                            select new User { Name = us.Name, Surname = us.Surname, Email = us.Email, Avatar = us.Avatar });
+                posts[i].user = user.FirstOrDefault();
+            }
+            return posts;
         }
     }
 }

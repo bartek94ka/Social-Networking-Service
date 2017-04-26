@@ -14,8 +14,8 @@ using Geolocation;
 using LocalSocial.Services.Interfaces;
 //musimy wybraæ sciezke do jednego serwisu
 //drugi using musi byc zakomentowany
-using LocalSocial.Services.EntityFrameworkServices;
-//using LocalSocial.Services.DapperServices;
+//using LocalSocial.Services.EntityFrameworkServices;
+using LocalSocial.Services.DapperServices;
 
 namespace LocalSocial.Controllers
 {
