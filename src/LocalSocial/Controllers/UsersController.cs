@@ -7,6 +7,8 @@ using LocalSocial.Models;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc;
+using LocalSocial.Services.EntityFrameworkServices;
+using LocalSocial.Services.Interfaces;
 
 namespace LocalSocial.Controllers
 {
@@ -15,31 +17,29 @@ namespace LocalSocial.Controllers
     {
         private readonly LocalSocialContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IUsersService _usersService;
 
         public UsersController(LocalSocialContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _usersService = new UsersService();
         }
 
         [Route("get")]
         [HttpGet]
-        //[Authorize]
-        //public async Task<IActionResult> User()
-        public IActionResult Users()
+        [Authorize]
+        public async Task<IActionResult> GetMyUserData()
         {
             var userId = HttpContext.User.GetUserId();
-            var user = _context.User.FirstOrDefault(x => x.Id == userId);
-            if (user != null)
-                return Ok(new UserBindingModel { Name = user.Name, Surname = user.Surname, SearchRange = user.SearchRange, Avatar = user.Avatar });
-            else
-                return Ok();
+            var user = _usersService.GetMyUserData(userId);
+            return Ok(user);
         }
+
         [Route("edit")]
         [HttpPut]
         [Authorize]
         public async Task<IActionResult> Users([FromBody] UserBindingModel model)
-        //public async Task<IActionResult> Users()
         {
             if (ModelState.IsValid)
             {
@@ -58,18 +58,18 @@ namespace LocalSocial.Controllers
             }
             return HttpBadRequest();
         }
+
         [Route("getUser")]
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> GetUser([FromBody] UserBindingModel model)
-        //public async Task<IActionResult> Users()
         {
             if (ModelState.IsValid)
             {
-                var user = _context.User.FirstOrDefault(x => x.Id == model.Id);
-                if (user != null)
+                var userData = _usersService.GetUserData(model);
+                if(userData != null)
                 {
-                    return Ok(user);
+                    return Ok(userData);
                 }
             }
             return HttpBadRequest();

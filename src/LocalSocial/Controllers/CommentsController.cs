@@ -42,9 +42,6 @@ namespace LocalSocial.Controllers
                         PostId = model.PostId
                     });
                 await _context.SaveChangesAsync();
-                //var comment = _context.Comment.LastOrDefault();
-                //var post = _context.Post.FirstOrDefault(x => x.Id == model.PostId);
-                //post.Comments.Add(comment);
                 await _context.SaveChangesAsync();
                 return Ok();
             }

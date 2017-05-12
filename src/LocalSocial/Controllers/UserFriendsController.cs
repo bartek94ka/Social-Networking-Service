@@ -11,6 +11,8 @@ using LocalSocial.Models;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using LocalSocial.Services.EntityFrameworkServices;
+using LocalSocial.Services.Interfaces;
 
 namespace LocalSocial.Controllers
 {
@@ -19,45 +21,35 @@ namespace LocalSocial.Controllers
     {
         private readonly LocalSocialContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IUserFriendsService _userFriendsService;
+
         public UserFriendsController(LocalSocialContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _userFriendsService = new UserFriendsService();
         }
+
         [Route("posts")]
         [HttpGet]
         [Authorize]
         public async Task<IEnumerable<Post>> GetMyFriendsPosts()
         {
             var userId = HttpContext.User.GetUserId();
-            var posts = (from p in _context.Post.Include(p => p.PostTags)
-                         join uf in _context.UserFriends on p._UserId equals uf.FriendId
-                         where uf.UserId == userId
-                         orderby p.AddDate descending
-                         select p).ToList();
-            for (int i = 0; i < posts.Count; i++)
-            {
-                var user = (from us in _context.User
-                            where us.Id == posts[i]._UserId
-                            select new User { Name = us.Name, Surname = us.Surname, Email = us.Email, Avatar = us.Avatar });
-                posts[i].user = user.FirstOrDefault();
-            }
+            var posts = _userFriendsService.GetMyFriendsPosts(userId);
             return posts;
         }
+
         [Route("myfriends")]
         [HttpGet]
         [Authorize]
         public async Task<IEnumerable<User>> GetFriends()
         {
             var userId = HttpContext.User.GetUserId();
-            var entity = (from uf in _context.UserFriends
-                          join us in _context.User on uf.FriendId equals us.Id
-                          where uf.UserId == userId
-                          select us).AsEnumerable();
-            //var entity = _context.Friend.FirstOrDefault(x=>x.UserId == userId);
-
-            return entity;
+            var friends = _userFriendsService.GetFriends(userId);
+            return friends;
         }
+
         [Route("find")]
         [HttpPost]
         [Authorize]
@@ -66,23 +58,12 @@ namespace LocalSocial.Controllers
             if (ModelState.IsValid)
             {
                 var userId = HttpContext.User.GetUserId();
-                var user = _context.User.FirstOrDefault(x => x.Id == userId);
-                //wszyscy poza biezacym uzytkownikiem
-                var userfriends = (from u in _context.UserFriends
-                                   where u.UserId == userId
-                                   select u.FriendId).ToList();
-                userfriends.Add(userId);
-                var friends = (from u in _context.User
-                               where !userfriends.Contains(u.Id)
-                               select u);
-
-                friends =
-                    friends.Where(x => x.Name == model.Name || x.Surname == model.Surname || x.Email == model.Email);
-                return friends.AsEnumerable();
+                var friends = _userFriendsService.FindFriends(userId, model);
+                return friends;
             }
             return null;
         }
-        //[Route("addfriend/{UserId:string}")]
+
         [Route("add")]
         [HttpPost]
         [Authorize]
@@ -106,6 +87,7 @@ namespace LocalSocial.Controllers
             }
             return HttpBadRequest();
         }
+
         [Route("remove")]
         [HttpDelete]
         [Authorize]
@@ -115,14 +97,11 @@ namespace LocalSocial.Controllers
             {
                 var userId = HttpContext.User.GetUserId();
                 var user = _context.User.FirstOrDefault(x => x.Id == userId);
-                //var friend = _context.User.FirstOrDefault(x => x.Id == UserId);
                 if (user != null)
                 {
                     var userfriend =
                         _context.UserFriends.FirstOrDefault(x => x.UserId == userId && x.FriendId == model.Id);
                     _context.UserFriends.Remove(userfriend);
-                    //user.Friends.Remove(friend);
-                    //user.Friends.Friends.Remove(friend);
                 }
                 await _context.SaveChangesAsync();
                 return Ok();

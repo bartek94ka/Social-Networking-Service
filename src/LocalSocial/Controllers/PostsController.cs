@@ -11,6 +11,11 @@ using LocalSocial.Models;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Geolocation;
+using LocalSocial.Services.Interfaces;
+//musimy wybraæ sciezke do jednego serwisu
+//drugi using musi byc zakomentowany
+//using LocalSocial.Services.EntityFrameworkServices;
+using LocalSocial.Services.DapperServices;
 
 namespace LocalSocial.Controllers
 {
@@ -19,12 +24,15 @@ namespace LocalSocial.Controllers
     {
         private readonly LocalSocialContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly PostService _postService;
 
         public PostsController(LocalSocialContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _postService = new PostService();
         }
+
         [Route("inrange")]
         [HttpPost]
         [Authorize]
@@ -34,24 +42,12 @@ namespace LocalSocial.Controllers
             {
                 var userId = HttpContext.User.GetUserId();
                 var user = _context.User.FirstOrDefault(x => x.Id == userId);
-                //range - dystans w kilometrach
-                //GeoCalculation.GetDistance(...) - zwraca dystans w milach => 1 mila = 1.6 km
-                var posts = (from p in _context.Post.Include(p => p.PostTags)
-                             let range = user.SearchRange / 1000
-                             where
-                             range >=
-                             GeoCalculator.GetDistance(model.Latitude, model.Longitude, p.Latitude, p.Longitude, 5) / 1.6
-                             orderby p.AddDate descending
-                             select p
-                                 ).ToList();
-                for (int i = 0; i < posts.Count; i++)
-                {
-                    posts[i].user = _context.User.FirstOrDefault(x => x.Id == posts[i]._UserId);
-                }
+                var posts = _postService.GetPostsInRange(user, model);
                 return posts;
             }
             return null;
         }
+
         [Route("add")]
         [HttpPost]
         [Authorize]
@@ -96,6 +92,7 @@ namespace LocalSocial.Controllers
             }
             return HttpBadRequest();
         }
+
         // GET: api/Posts
         [Route("tag")]
         [HttpPost]
@@ -104,19 +101,7 @@ namespace LocalSocial.Controllers
         {
             if (ModelState.IsValid)
             {
-                var posts = (from p in _context.Post.Include(p => p.PostTags)
-                             join pt in _context.PostTags on p.Id equals pt.PostId
-                             where pt.TagId == model.TagId
-                             orderby p.AddDate descending
-                             select p).ToList();
-                for (int i = 0; i < posts.Count; i++)
-                {
-                    var user = (from us in _context.User
-                                where us.Id == posts[i]._UserId
-                                select new User { Name = us.Name, Surname = us.Surname, Email = us.Email, Avatar = us.Avatar });
-                    posts[i].user = user.FirstOrDefault();
-                }
-                
+                var posts = _postService.GetPostsByTag(model);
                 return posts;
             }
             return null;
@@ -127,16 +112,15 @@ namespace LocalSocial.Controllers
         [Authorize]
         public IActionResult GetPost(int Id)
         {
-            Post post = _context.Post.Include(x => x.Comments).ThenInclude(p => p.User).Include(x => x.PostTags).First(x => x.Id == Id);
-            var user = (from us in _context.User
-                        where us.Id == post._UserId
-                        select new User { Name = us.Name, Surname = us.Surname, Email = us.Email, Avatar = us.Avatar });
-            if (user != null && post != null)
+            var post = _postService.GetPost(Id);
+            if (post == null)
             {
-                post.user = user.FirstOrDefault();
+                return HttpBadRequest();
+            }
+            else
+            {
                 return Ok(post);
             }
-            return HttpBadRequest();
         }
 
         [Route("edit/{Id:int}")]
@@ -216,15 +200,14 @@ namespace LocalSocial.Controllers
             }
             return HttpBadRequest();
         }
+
         // GET: api/Posts
         [Route("all")]
         [HttpGet]
         [Authorize]
-        public async Task<IEnumerable<Post>> GetPosts()
+        public async Task<IEnumerable<Post>> GetAllPosts()
         {
-            var userId = HttpContext.User.GetUserId();
-            //var posts = _context.Post.AllAsync(x => x.UserId == userId);
-            var posts = _context.Post.AsEnumerable();
+            var posts = _postService.GetAllPosts();
             return posts;
         }
 
@@ -234,12 +217,7 @@ namespace LocalSocial.Controllers
         public async Task<IEnumerable<Post>> GetMyPosts()
         {
             var userId = HttpContext.User.GetUserId();
-            //var posts = _context.Post.Include(x=>x.user).AsQueryable().Where(x => x._UserId == userId).OrderByDescending(p => p.AddDate);
-            var posts = _context.Post.Include(x => x.PostTags).Where(x => x._UserId == userId).OrderByDescending(p => p.AddDate).ToList();
-            for (int i = 0; i < posts.Count; i++)
-            {
-                posts[i].user = _context.User.FirstOrDefault(x => x.Id == posts[i]._UserId);
-            }
+            var posts = _postService.GetMyPosts(userId);
             return posts;
         }
     }
