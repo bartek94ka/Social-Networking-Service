@@ -88,7 +88,26 @@ namespace LocalSocial.Services.DapperServices
 
         public Post GetPost(int Id)
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_connectionProvider.GetConnectionString()))
+            {
+                if (connection.State == System.Data.ConnectionState.Closed)
+                {
+                    connection.Open();
+                }
+                var query = @"SELECT post.[Id],post.[AddDate],post.[Description],post.[Latitude],post.[Longitude],post.[Title],post.[_UserId],
+		                        postTag.[TagId],
+		                        users.[Id], users.[Email], users.[SearchRange], users.[Avatar]
+                                FROM[dbo].[Post] post 
+                                join[dbo].[PostTags] postTag 
+                                on post.[Id] = postTag.[PostId] 
+                                join [dbo].[AspNetUsers] users
+                                on users.[Id] = post.[_UserId]
+                                where post.[Id] = '";
+                var queryResult = connection.QueryAsync(query + Id + "'");
+                var posts = queryResult.Result.First();
+                connection.Close();
+                return posts;
+            }
         }
 
         public IEnumerable<Post> GetAllPosts()
@@ -119,7 +138,26 @@ namespace LocalSocial.Services.DapperServices
 
         public IEnumerable<Post> GetMyPosts(string userId)
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_connectionProvider.GetConnectionString()))
+            {
+                if (connection.State == System.Data.ConnectionState.Closed)
+                {
+                    connection.Open();
+                }
+                var query = @"SELECT post.[Id],post.[AddDate],post.[Description],post.[Latitude],post.[Longitude],post.[Title],post.[_UserId],
+		                        postTag.[TagId],
+		                        users.[Id], users.[Email], users.[SearchRange], users.[Avatar]
+                                FROM[dbo].[Post] post 
+                                join[dbo].[PostTags] postTag 
+                                on post.[Id] = postTag.[PostId] 
+                                join [dbo].[AspNetUsers] users
+                                on users.[Id] = post.[_UserId]
+                                where users.[Id] = '";
+                var queryResult = connection.QueryAsync(query + userId + "'");
+                var posts = queryResult.Result.First();
+                connection.Close();
+                return posts;
+            }
         }
     }
 }
