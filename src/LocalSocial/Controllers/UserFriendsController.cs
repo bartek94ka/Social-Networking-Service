@@ -11,8 +11,11 @@ using LocalSocial.Models;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Identity;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using LocalSocial.Services.EntityFrameworkServices;
 using LocalSocial.Services.Interfaces;
+//musimy wybrać sciezke do jednego serwisu
+//drugi using musi byc zakomentowany
+//using LocalSocial.Services.EntityFrameworkServices;
+using LocalSocial.Services.DapperServices;
 
 namespace LocalSocial.Controllers
 {

@@ -94,19 +94,23 @@ namespace LocalSocial.Services.DapperServices
                 {
                     connection.Open();
                 }
-                var query = @"SELECT post.[Id],post.[AddDate],post.[Description],post.[Latitude],post.[Longitude],post.[Title],post.[_UserId],
-		                        postTag.[TagId],
-		                        users.[Id], users.[Email], users.[SearchRange], users.[Avatar]
-                                FROM[dbo].[Post] post 
-                                join[dbo].[PostTags] postTag 
-                                on post.[Id] = postTag.[PostId] 
-                                join [dbo].[AspNetUsers] users
-                                on users.[Id] = post.[_UserId]
+                var query = @"SELECT post.[Id], post.[AddDate], post.[Description], post.[Latitude], post.[Longitude], post.[Title], post.[_UserId] 
+                                FROM [dbo].[Post] post
                                 where post.[Id] = '";
                 var queryResult = connection.QueryAsync(query + Id + "'");
-                var posts = queryResult.Result.First();
+
+                var post = queryResult.Result.Select(p => new Post
+                {
+                    AddDate = (DateTime)p.AddDate,
+                    Description = (string)p.Description,
+                    Id = (int)p.Id,
+                    Latitude = (float)p.Latitude,
+                    Longitude = (float)p.Longitude,
+                    Title = (string)p.Title,
+                    _UserId = (string)p._UserId
+                }).FirstOrDefault();
                 connection.Close();
-                return posts;
+                return post;
             }
         }
 
@@ -144,17 +148,20 @@ namespace LocalSocial.Services.DapperServices
                 {
                     connection.Open();
                 }
-                var query = @"SELECT post.[Id],post.[AddDate],post.[Description],post.[Latitude],post.[Longitude],post.[Title],post.[_UserId],
-		                        postTag.[TagId],
-		                        users.[Id], users.[Email], users.[SearchRange], users.[Avatar]
-                                FROM[dbo].[Post] post 
-                                join[dbo].[PostTags] postTag 
-                                on post.[Id] = postTag.[PostId] 
-                                join [dbo].[AspNetUsers] users
-                                on users.[Id] = post.[_UserId]
-                                where users.[Id] = '";
+                var query = @"SELECT post.[Id], post.[AddDate], post.[Description], post.[Latitude], post.[Longitude], post.[Title], post.[_UserId] 
+                                FROM [dbo].[Post] post
+                                where post.[_UserId] = '";
                 var queryResult = connection.QueryAsync(query + userId + "'");
-                var posts = queryResult.Result.First();
+                var posts = queryResult.Result.Select(post => new Post
+                {
+                    AddDate = (DateTime)post.AddDate,
+                    Description = (string)post.Description,
+                    Id = (int)post.Id,
+                    Latitude = (float)post.Latitude,
+                    Longitude = (float)post.Longitude,
+                    Title = (string)post.Title,
+                    _UserId = (string)post._UserId
+                });
                 connection.Close();
                 return posts;
             }
