@@ -58,7 +58,7 @@ var SessionController = function ($scope, $cookieStore, $rootScope, $localStorag
 
             $scope.Email = resp.data.Email;
             $localStorage.IsLogged = true;
-            window.location.href = "#/myposts";
+            window.location.href = "#/login";
             $window.location.reload();
         }, function (err) {
             $scope.EmailError = "";
