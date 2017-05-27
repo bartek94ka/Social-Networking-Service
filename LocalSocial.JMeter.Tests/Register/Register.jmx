@@ -17,7 +17,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">10</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">100</stringProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
         <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <longProp name="ThreadGroup.start_time">1492436484000</longProp>
         <longProp name="ThreadGroup.end_time">1492436484000</longProp>
@@ -31,7 +31,7 @@
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
           <stringProp name="HTTPSampler.domain">localsocial.azurewebsites.net/#/</stringProp>
-          <stringProp name="HTTPSampler.port">1904</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -56,7 +56,7 @@
         <hashTree>
           <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Licznik" enabled="true">
             <stringProp name="CounterConfig.start">7</stringProp>
-            <stringProp name="CounterConfig.end">1007</stringProp>
+            <stringProp name="CounterConfig.end">107</stringProp>
             <stringProp name="CounterConfig.incr">1</stringProp>
             <stringProp name="CounterConfig.name">licznik</stringProp>
             <stringProp name="CounterConfig.format"></stringProp>
@@ -232,7 +232,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">10</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">100</stringProp>
+        <stringProp name="ThreadGroup.num_threads">10</stringProp>
         <stringProp name="ThreadGroup.ramp_time">10</stringProp>
         <longProp name="ThreadGroup.start_time">1492436484000</longProp>
         <longProp name="ThreadGroup.end_time">1492436484000</longProp>
@@ -246,7 +246,7 @@
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
           <stringProp name="HTTPSampler.domain">localsocial.azurewebsites.net/#/</stringProp>
-          <stringProp name="HTTPSampler.port">1904</stringProp>
+          <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.connect_timeout"></stringProp>
           <stringProp name="HTTPSampler.response_timeout"></stringProp>
           <stringProp name="HTTPSampler.protocol"></stringProp>
@@ -271,7 +271,7 @@
         <hashTree>
           <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Licznik" enabled="true">
             <stringProp name="CounterConfig.start">7</stringProp>
-            <stringProp name="CounterConfig.end">1007</stringProp>
+            <stringProp name="CounterConfig.end">107</stringProp>
             <stringProp name="CounterConfig.incr">1</stringProp>
             <stringProp name="CounterConfig.name">licznik</stringProp>
             <stringProp name="CounterConfig.format"></stringProp>
