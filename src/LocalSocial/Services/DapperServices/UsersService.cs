@@ -29,10 +29,17 @@ namespace LocalSocial.Services.DapperServices
                 {
                     connection.Open();
                 }
-                var query = @"SELECT [Name], [Surname], [SearchRange], [Avatar] 
-                              FROM [dbo].[AspNetUsers] users WHERE users.[Id] = '";
-                var queryResult = connection.QueryAsync(query + userId + "'");
-                var user = queryResult.Result.FirstOrDefault();
+                var query = @"SELECT users.[Name], users.[Surname], users.[SearchRange], users.[Avatar] 
+                              FROM [dbo].[AspNetUsers] users WHERE users.[Id] = '" + userId + "'";
+                var queryResult = connection.QueryAsync(query);
+                var userData = queryResult.Result.FirstOrDefault();
+                var user = new UserBindingModel
+                {
+                    Avatar = (string)userData.Avatar,
+                    Name = (string)userData.Name,
+                    Surname = (string)userData.Surname,
+                    SearchRange = (float)userData.SearchRange
+                };
                 connection.Close();
                 return user;
             }
@@ -43,6 +50,6 @@ namespace LocalSocial.Services.DapperServices
             var userData = _context.User.FirstOrDefault(x => x.Id == user.Id);
             return userData;
         }
-        
+
     }
 }
